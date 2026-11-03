@@ -3,7 +3,8 @@ export type IssueCategory =
   | 'TERMINOLOGY'
   | 'TONE_DRIFT'
   | 'VISUAL_WCAG'
-  | 'CROSS_MODAL';
+  | 'CROSS_MODAL'
+  | 'CROSS_MODAL_DISCREPANCY';
 
 export type IssueSeverity = 'High' | 'Medium';
 
@@ -23,6 +24,17 @@ export interface AuditIssue {
   suggestedFgHex?: string;
   status: 'active' | 'resolved' | 'overridden';
   overrideReason?: string;
+}
+
+export interface GuidelineTelemetry {
+  section: string;
+  title: string;
+  totalFlags: number;
+  overrides: number;
+  overrideRate: number;
+  commonRemarks: string[];
+  isAmbiguous: boolean;
+  recommendation: string;
 }
 
 export interface BrandGuideline {

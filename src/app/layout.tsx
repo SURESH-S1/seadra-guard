@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata: Metadata = {
   title: 'Seadra Guard — Deterministic & Agentic Brand-Governance Platform',
@@ -13,9 +14,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-[#0B0F19] text-slate-100 min-h-screen antialiased selection:bg-teal-500/30 selection:text-teal-200">
-        {children}
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className="min-h-screen antialiased selection:bg-indigo-500/30 selection:text-indigo-600 dark:selection:text-indigo-200">
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

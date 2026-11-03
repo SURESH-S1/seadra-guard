@@ -2,73 +2,93 @@
 
 import React from 'react';
 import { SAMPLE_PRESETS, SampleDraftPreset } from '@/lib/brandVaultDefaults';
-import { Sparkles, AlertOctagon, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { FileText, Image as ImageIcon } from 'lucide-react';
 
 interface PresetSelectorProps {
   currentPresetId: string;
   onSelectPreset: (preset: SampleDraftPreset) => void;
+  onLoadFilePreset?: (type: 'doc' | 'banner', filename: string) => void;
 }
 
 export const PresetSelector: React.FC<PresetSelectorProps> = ({
   currentPresetId,
   onSelectPreset,
+  onLoadFilePreset,
 }) => {
   return (
-    <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3 mb-6 shadow-sm">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2.5">
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-teal-400" />
-          <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
-            1-Click Demo Presets for Hackathon Judges
-          </span>
-        </div>
-        <span className="text-[11px] text-slate-400">
-          Click any preset to instantaneously populate draft, banner, and test audit engine
+    <div className="flex flex-wrap items-center justify-between gap-3 mb-5 px-1 py-1 text-sm">
+      {/* Left: Label + 3 Segmented Preset Buttons */}
+      <div className="flex items-center gap-2.5 flex-wrap">
+        <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
+          Presets:
         </span>
+        <div className="inline-flex items-center bg-slate-100/90 dark:bg-slate-900/80 p-1 rounded-xl border border-slate-200/80 dark:border-slate-800 gap-1 shadow-xs">
+          {SAMPLE_PRESETS.map((preset) => {
+            const isSelected = currentPresetId === preset.id;
+            let displayLabel = 'Q4 Cloud Launch (5 Flags)';
+            if (preset.id === 'sample-2') displayLabel = 'Security Notice (3 Flags)';
+            if (preset.id === 'sample-3') displayLabel = '100% Compliant Draft';
+
+            return (
+              <button
+                key={preset.id}
+                onClick={() => onSelectPreset(preset)}
+                className={`text-xs md:text-sm px-3.5 py-1.5 rounded-lg font-medium transition-all cursor-pointer flex items-center gap-2 ${
+                  isSelected
+                    ? 'bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 font-semibold shadow-xs border border-slate-200/60 dark:border-slate-700/60'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/50 dark:hover:bg-slate-800/40 border border-transparent'
+                }`}
+              >
+                <span>{displayLabel}</span>
+                {preset.id === 'sample-1' && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                )}
+                {preset.id === 'sample-2' && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                )}
+                {preset.id === 'sample-3' && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
-        {SAMPLE_PRESETS.map((preset, idx) => {
-          const isSelected = currentPresetId === preset.id;
-          const isViolations = preset.id === 'sample-1';
-          const isCompliant = preset.id === 'sample-3';
+      {/* Right: Quick asset pills: [ 📄 Q4_Launch.md ] [ 🖼️ Banner.png ] placed neatly on the right */}
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            if (onLoadFilePreset) {
+              onLoadFilePreset('doc', 'Q4_Launch.md');
+            } else {
+              onSelectPreset(SAMPLE_PRESETS[0]);
+            }
+          }}
+          className="px-3 py-1.5 rounded-xl bg-slate-100/90 dark:bg-slate-900/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800 text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+          title="Quick load Q4_Launch.md draft file"
+        >
+          <FileText className="w-3.5 h-3.5 text-indigo-500" />
+          <span>Q4_Launch.md</span>
+        </button>
 
-          return (
-            <button
-              key={preset.id}
-              onClick={() => onSelectPreset(preset)}
-              className={`text-left p-2.5 rounded-lg border transition-all relative overflow-hidden group ${
-                isSelected
-                  ? 'bg-slate-800/90 border-teal-500 shadow-md shadow-teal-500/10 ring-1 ring-teal-500/30'
-                  : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 hover:bg-slate-800/40'
-              }`}
-            >
-              <div className="flex items-center justify-between gap-1 mb-1">
-                <span className="text-xs font-bold text-white group-hover:text-teal-300 transition-colors">
-                  {preset.name}
-                </span>
-                <span
-                  className={`text-[10px] font-mono font-medium px-2 py-0.5 rounded-full border ${
-                    isCompliant
-                      ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
-                      : isViolations
-                      ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
-                      : 'bg-amber-500/15 text-amber-300 border-amber-500/30'
-                  }`}
-                >
-                  {preset.badge}
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-400 line-clamp-1">{preset.tagline}</p>
-
-              {isSelected && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-teal-400 to-blue-500" />
-              )}
-            </button>
-          );
-        })}
+        <button
+          type="button"
+          onClick={() => {
+            if (onLoadFilePreset) {
+              onLoadFilePreset('banner', 'Banner.png');
+            } else {
+              onSelectPreset(SAMPLE_PRESETS[0]);
+            }
+          }}
+          className="px-3 py-1.5 rounded-xl bg-slate-100/90 dark:bg-slate-900/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800 text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+          title="Quick load Banner.png asset"
+        >
+          <ImageIcon className="w-3.5 h-3.5 text-rose-500" />
+          <span>Banner.png</span>
+        </button>
       </div>
     </div>
   );
 };
-
